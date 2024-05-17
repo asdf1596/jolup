@@ -22,7 +22,8 @@ if not cap.isOpened():
     sys.exit(1) 
 
 hands = mp_hands.Hands()
-
+d = ""
+e = ""
 while True: 
     res, frame = cap.read()
 
@@ -56,7 +57,7 @@ while True:
                     fingers += 1  
 
             if fingers == 0:  
-                hand_shape = "stop" 
+                hand_shape = "s" 
             elif fingers == 1:  
                 hand_shape = "motor 1" 
             elif fingers == 2:  
@@ -79,9 +80,13 @@ while True:
           cx, cy = int(lm.x * w), int(lm.y * h)
           landmark_coords.append((cx, cy))
     else:
-        c = "stop"
-        #arduino.write(c)
-        print("정지")
+        c = "s"
+        if d!= c:
+            e = c.encode('utf-8')
+            arduino.write(e)
+            print(c)
+        d = c
+        #print("정지")
         continue
     cv2.imshow("MediaPipe Hands", frame)  
     g = 0
@@ -100,14 +105,18 @@ while True:
       elif len(landmark_coords) >= 10:
         if fingers > 0:
             if abs(landmark_coords[5][0] - landmark_coords[9][0]) > abs(landmark_coords[5][1] - landmark_coords[9][1]):
-                c = "go" if landmark_coords[5][0] > landmark_coords[9][0] else "back"
+                c = "g" if landmark_coords[5][0] > landmark_coords[9][0] else "back"
             else:
                 c = "left" if landmark_coords[5][0] > landmark_coords[8][0] and landmark_coords[5][1] < landmark_coords[9][1] else "right"
         else:
-            c = "stop"
+            c = "s"
     else:
-      c = "stop"
-    arduino.write(c)
-    print(c)
+      c = "s"
+    if d!= c:
+        e = c.encode('utf-8')
+        arduino.write(e)
+        print(c)
+    d = c
+    
 cv2.destroyAllWindows() 
 cap.release()
