@@ -2,13 +2,13 @@ import cv2
 import sys 
 import mediapipe as mp  
 import math  
-from serial import Serial
+# from serial import Serial
 def distance(p1, p2):
     return math.dist((p1.x, p1.y), (p2.x, p2.y))  
-arduino = Serial(
-    port='COM5',
-    baudrate=9600,
-)
+# arduino = Serial(
+#     port='COM5',
+#     baudrate=9600,
+# )
 
 
 mp_drawing = mp.solutions.drawing_utils
@@ -57,7 +57,7 @@ while True:
                     fingers += 1  
 
             if fingers == 0:  
-                hand_shape = "s" 
+                hand_shape = "stop" 
             elif fingers == 1:  
                 hand_shape = "motor 1" 
             elif fingers == 2:  
@@ -83,12 +83,12 @@ while True:
         c = "s"
         if d!= c:
             e = c.encode('utf-8')
-            arduino.write(e)
+            # arduino.write(e)
             print(c)
         d = c
         #print("정지")
         continue
-    cv2.imshow("MediaPipe Hands", frame)  
+    cv2.imshow("MediaPipe Hands", frame)  #창모드 실행
     g = 0
     if(abs(landmark_coords[10][0]-landmark_coords[9][0])<5):
         g = abs((int(landmark_coords[10][1]-landmark_coords[9][1]))/2)
@@ -105,18 +105,18 @@ while True:
       elif len(landmark_coords) >= 10:
         if fingers > 0:
             if abs(landmark_coords[5][0] - landmark_coords[9][0]) > abs(landmark_coords[5][1] - landmark_coords[9][1]):
-                c = "g" if landmark_coords[5][0] > landmark_coords[9][0] else "back"
+                c = "front" if landmark_coords[5][0] > landmark_coords[9][0] else "back"
             else:
                 c = "left" if landmark_coords[5][0] > landmark_coords[8][0] and landmark_coords[5][1] < landmark_coords[9][1] else "right"
         else:
-            c = "s"
+            c = "stop"
     else:
-      c = "s"
+      c = "stop"
     if d!= c:
         e = c.encode('utf-8')
-        arduino.write(e)
+        # arduino.write(e)
         print(c)
     d = c
-    
-cv2.destroyAllWindows() 
+
+cv2.destroyAllWindows()
 cap.release()
