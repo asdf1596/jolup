@@ -91,6 +91,7 @@ def main():
                 e = c.encode('utf-8')
                 # arduino.write(e)
                 print(c)
+                return c
             d = c
             continue
 
@@ -124,10 +125,12 @@ def main():
             e = c.encode('utf-8')
             # arduino.write(e)
             print(c)
+            return c
         d = c
 
     cv2.destroyAllWindows()
     cap.release()
+    return "Camera closed"
 
 if __name__ == "__main__":
     main()
