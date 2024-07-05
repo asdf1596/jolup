@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 
-interface User {
-    val: string;
-}
-
 function App() {
-    const [pre, setPre] = useState<{ val?: string }>({});
+    const [data, setData] = useState<{ val?: string }>({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -22,7 +18,8 @@ function App() {
                     return response.json();
                 })
                 .then((data) => {
-                    setPre(data);
+                    console.log(data);
+                    setData(data);
                     setLoading(false);
                 })
                 .catch((err) => {
@@ -31,25 +28,21 @@ function App() {
                 });
         };
 
-        // 초기 데이터 로드
-        fetchData();
+        fetchData(); // 컴포넌트가 마운트될 때 즉시 데이터를 가져옴
+        const interval = setInterval(fetchData, 1000); // 1초마다 fetchData 함수 호출
 
-        // 1초마다 데이터 갱신
-        const interval = setInterval(fetchData, 1000);
-
-        // 컴포넌트 언마운트 시 인터벌 정리
-        return () => clearInterval(interval);
+        return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 정리
     }, []);
 
     return (
         <div className="App">
             <div>
                 {loading ? (
-                    <p>loading...</p>
+                    <p>Loading...</p>
                 ) : error ? (
                     <p>Error: {error}</p>
                 ) : (
-                    <p>{pre.val}</p>
+                    <p>{data.val}</p>
                 )}
             </div>
         </div>
