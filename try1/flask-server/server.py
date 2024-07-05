@@ -7,8 +7,8 @@ import threading
 
 app = Flask(__name__)
 current_hand_shape = "settings...."
-shape_lock = threading.Lock()
-
+try1 = 0
+lock1 = threading.Lock()
 def distance(p1, p2):
     return math.dist((p1.x, p1.y), (p2.x, p2.y))
 
@@ -56,7 +56,7 @@ def draw_hand_landmarks(frame, hand_landmarks, mp_drawing, mp_drawing_styles, mp
     )
 
 def update_hand_shape():
-    global current_hand_shape
+    global current_hand_shape,try1
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
     mp_hands = mp.solutions.hands
@@ -79,9 +79,7 @@ def update_hand_shape():
                 points = hand_landmarks.landmark
                 fingers = detect_hand_shape(points)
                 hand_shape = get_hand_shape(fingers)
-                shape_lock.acquire()
                 current_hand_shape = hand_shape
-                shape_lock.release()
                 cv2.putText(
                     frame,
                     hand_shape,
@@ -96,13 +94,15 @@ def update_hand_shape():
                     cx, cy = int(lm.x * w), int(lm.y * h)
                     landmark_coords.append((cx, cy))
         else:
+            lock1.acquire()
             c = "stop"
             if d != c:
-                shape_lock.acquire()
                 current_hand_shape = c
-                shape_lock.release()
-                print("update " + current_hand_shape)
+                settry(1)
+                print(gettry())
+                print("update "+current_hand_shape)
             d = c
+            lock1.release()
             continue
 
         cv2.imshow("MediaPipe Hands", frame)
@@ -131,27 +131,32 @@ def update_hand_shape():
                     c = "stop"
         else:
             c = "stop"
+        lock1.acquire()
         if d != c:
-            shape_lock.acquire()
             current_hand_shape = c
-            shape_lock.release()
-            print("update " + current_hand_shape)
+            settry(1)
+            print(gettry())
+            print("update "+current_hand_shape)
+        lock1.release()
         d = c
 
     cv2.destroyAllWindows()
     cap.release()
+def gettry():
+    global try1
+    return try1
+def settry(a):
+    global try1
+    try1+=a
 
-thread1 = threading.Thread(target=update_hand_shape)
-
+thred1 = threading.Thread(target=update_hand_shape)
 @app.route('/users')
 def users():
     global current_hand_shape
-    shape_lock.acquire()
-    current_shape = current_hand_shape
-    shape_lock.release()
-    print("user " + current_shape)
-    return jsonify({"val": current_shape})
+    print(gettry())
+    print("user "+current_hand_shape)
+    return jsonify({"val": current_hand_shape})
 
 if __name__ == "__main__":
-    thread1.start()
+    thred1.start()
     app.run(debug=True)
