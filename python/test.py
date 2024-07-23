@@ -2,7 +2,7 @@ from serial import Serial
 
 arduino = Serial(
 
-    port='COM5',
+    port='COM12',
     baudrate=9600,
 )
 while(1):
