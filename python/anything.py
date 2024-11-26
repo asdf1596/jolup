@@ -1,14 +1,10 @@
-class asdf():
-    def __init__(self):
-        self.jan = 0
-    def plus(self, ina):
-        self.ina = ina
-        self.jan+=self.jan+ina
-        print(self.jan)
-    def minus(self,aut):
-        self.aut = aut
-        print([self.jan-aut if self.jan>=aut else "잔액이 부족합니다."][0])
-asd = asdf()
-asd.plus(10)
-asd.minus(5)
-asd.minus(55)
+a = list(input())
+if len(a) == 2:
+    print(int(a[0])+int(a[1]))
+elif len(a) == 3:
+    if a[1] == "0":
+        print(int(a[0]+a[1])+int(a[2]))
+    else:
+        print(int(a[0])+int(a[1]+a[2]))
+else:
+    print(20)

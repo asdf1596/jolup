@@ -2,14 +2,15 @@ import cv2
 import sys 
 import mediapipe as mp  
 import math  
-from serial import Serial
+import socket
+
 def distance(p1, p2):
     return math.dist((p1.x, p1.y), (p2.x, p2.y))  
-# arduino = Serial(
-#     port='COM5',
-#     baudrate=9600,
-# )
 
+HOST = '127.0.0.1'
+PORT = 65432
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect((HOST, PORT))
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -80,10 +81,9 @@ while True:
           cx, cy = int(lm.x * w), int(lm.y * h)
           landmark_coords.append((cx, cy))
     else:
-        c = "s"
+        c = "stop"
         if d!= c:
-            e = c.encode('utf-8')
-            #arduino.write(e)
+            sock.sendall(c.encode('utf-8'))  # Unity로 데이터 전송
             print(c)
         d = c
         print("정지")
@@ -113,10 +113,10 @@ while True:
     else:
       c = "stop"
     if d!= c:
-        e = c.encode('utf-8')
-        #arduino.write(e)
+        sock.sendall(c.encode('utf-8'))  # Unity로 데이터 전송
         print(c)
     d = c
 
 cv2.destroyAllWindows()
 cap.release()
+sock.close()
